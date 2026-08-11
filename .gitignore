@@ -1,0 +1,22 @@
+# ── Next.js (lumina-dashboard) ──
+frontend/node_modules/  
+frontend/.next/
+frontend/.env.local
+
+# ── Spring Boot (backend) ──
+backend/target/
+backend/.mvn/
+backend/*.iml
+backend/.idea/
+backend/src/main/resources/application.properties
+
+# ── Python (Volticon) ──
+Volticon/venv/
+Volticon/__pycache__/
+Volticon/*.pyc
+Volticon/.env
+
+# ── OS / editor junk ──
+.DS_Store
+Thumbs.db
+.vscode/
