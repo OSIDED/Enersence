@@ -13,7 +13,8 @@ backend/src/main/resources/application.properties
 # ── Python (Volticon) ──
 Volticon/venv/
 Volticon/__pycache__/
-Volticon/*.pyc
+Volticon/*.
+
 Volticon/.env
 
 # ── OS / editor junk ──

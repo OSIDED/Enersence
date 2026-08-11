@@ -1,6 +1,7 @@
 package com.volticon.energy.service;
 
 import com.volticon.energy.dto.CategoryBreakdownDto;
+import com.volticon.energy.dto.CurrentLoadDto;
 import com.volticon.energy.dto.DailyUsageDto;
 import com.volticon.energy.dto.MonthComparisonDto;
 import com.volticon.energy.dto.ReadingRequest;
@@ -157,5 +158,25 @@ public class EnergyReadingService {
                 Math.round(currentCost * 100.0) / 100.0
         );
     }
-}
 
+    /**
+     * Powers "Current Power Load". Sums the wattage of every distinct
+     * appliance that has at least one reading logged today, converted to
+     * kW. This is a real proxy computed from actual logged data — since
+     * the schema captures daily totals rather than continuous real-time
+     * sampling, a true instantaneous "right now" reading isn't something
+     * this data model can honestly produce.
+     */
+    public CurrentLoadDto getCurrentLoad(Long userId) {
+        List<Object[]> rows = readingRepository.findActiveApplianceWattages(userId, LocalDate.now());
+
+        double totalWatts = rows.stream()
+                .mapToDouble(r -> ((Number) r[1]).doubleValue())
+                .sum();
+
+        return new CurrentLoadDto(
+                Math.round((totalWatts / 1000.0) * 100.0) / 100.0,
+                rows.size()
+        );
+    }
+}

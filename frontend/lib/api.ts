@@ -76,6 +76,11 @@ export type MonthComparison = {
   estimatedBill: number;
 };
 
+export type CurrentLoad = {
+  currentLoadKw: number;
+  activeDeviceCount: number;
+};
+
 export type Report = {
   reportId: number;
   reportType: string;
@@ -203,6 +208,14 @@ export async function getMonthComparison(
     { cache: "no-store" },
   );
   if (!res.ok) throw new Error("Failed to fetch month comparison");
+  return res.json();
+}
+
+export async function getCurrentLoad(userId: number): Promise<CurrentLoad> {
+  const res = await apiFetch(`/api/readings/current-load?user_id=${userId}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to fetch current load");
   return res.json();
 }
 

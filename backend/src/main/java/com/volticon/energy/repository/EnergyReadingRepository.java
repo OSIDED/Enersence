@@ -60,5 +60,19 @@ public interface EnergyReadingRepository extends JpaRepository<EnergyReading, Lo
     Double sumCostBetween(@Param("userId") Long userId,
                            @Param("startDate") LocalDate startDate,
                            @Param("endDate") LocalDate endDate);
-}
 
+    // Powers "Current Power Load" — the combined wattage of every
+    // appliance that has at least one reading logged on a given day
+    // (default: today). This is a genuine proxy for "what's likely
+    // running today" computed from real logged data, since the schema
+    // captures daily usage totals rather than continuous real-time
+    // sampling — a true instantaneous reading isn't something this data
+    // model can produce.
+    @Query("""
+        SELECT DISTINCT a.applianceId, a.powerRatingWatts
+        FROM EnergyReading r
+        JOIN Appliance a ON a.applianceId = r.applianceId
+        WHERE a.userId = :userId AND r.readingDate = :day
+        """)
+    List<Object[]> findActiveApplianceWattages(@Param("userId") Long userId, @Param("day") LocalDate day);
+}

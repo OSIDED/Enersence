@@ -1,5 +1,6 @@
 package com.volticon.energy.controller;
 
+import com.volticon.energy.dto.CurrentLoadDto;
 import com.volticon.energy.dto.DailyUsageDto;
 import com.volticon.energy.dto.ReadingRequest;
 import com.volticon.energy.dto.ReadingResponse;
@@ -15,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/readings")
-@CrossOrigin(origins = "*")
 public class EnergyReadingController {
 
     private final EnergyReadingService readingService;
@@ -56,5 +56,11 @@ public class EnergyReadingController {
     @GetMapping("/history")
     public List<DailyUsageDto> getWeeklyHistory(@RequestParam("user_id") Long userId) {
         return readingService.getWeeklyUsage(userId);
+    }
+
+    /** Powers the Dashboard's "Current Power Load" stat card with real data. */
+    @GetMapping("/current-load")
+    public CurrentLoadDto getCurrentLoad(@RequestParam("user_id") Long userId) {
+        return readingService.getCurrentLoad(userId);
     }
 }

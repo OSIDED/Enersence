@@ -29,11 +29,13 @@ import {
   getRecommendations,
   getCategoryBreakdown,
   getMonthComparison,
+  getCurrentLoad,
   type Meter,
   type DailyUsage,
   type Recommendation,
   type CategoryBreakdown,
   type MonthComparison,
+  type CurrentLoad,
 } from "@/lib/api";
 import { useAuth } from "@/lib/auth/AuthContext";
 
@@ -62,6 +64,7 @@ export default function DashboardPage() {
   >([]);
   const [monthComparison, setMonthComparison] =
     useState<MonthComparison | null>(null);
+  const [currentLoad, setCurrentLoad] = useState<CurrentLoad | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAddMeter, setShowAddMeter] = useState(false);
   const [selectedMeterId, setSelectedMeterId] = useState<number | null>(null);
@@ -88,14 +91,16 @@ export default function DashboardPage() {
 
   async function loadAnalytics() {
     try {
-      const [recs, categories, comparison] = await Promise.all([
+      const [recs, categories, comparison, load] = await Promise.all([
         getRecommendations(USER_ID!),
         getCategoryBreakdown(USER_ID!),
         getMonthComparison(USER_ID!),
+        getCurrentLoad(USER_ID!),
       ]);
       setAlerts(recs);
       setCategoryBreakdown(categories);
       setMonthComparison(comparison);
+      setCurrentLoad(load);
     } catch {
       // Analytics not reachable yet — sections show honest empty states
     }
@@ -181,15 +186,22 @@ export default function DashboardPage() {
           />
           <StatCard
             label="Current Power Load"
-            value="1.2"
+            value={currentLoad ? currentLoad.currentLoadKw.toFixed(2) : "0.00"}
             unit="kW"
             icon={Zap}
             iconBg="#D1FAE5"
             iconColor="#059669"
             footer={
-              <span className="flex items-center gap-1 text-emerald-600 font-medium">
-                ● Normal operation
-              </span>
+              currentLoad && currentLoad.activeDeviceCount > 0 ? (
+                <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                  ● {currentLoad.activeDeviceCount} device
+                  {currentLoad.activeDeviceCount > 1 ? "s" : ""} logged today
+                </span>
+              ) : (
+                <span className="text-slate-500 dark:text-slate-400">
+                  No usage logged today
+                </span>
+              )
             }
           />
           <StatCard
