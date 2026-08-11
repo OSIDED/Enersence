@@ -1,0 +1,22 @@
+# Same Postgres database your Python analytics service reads/writes.
+spring.datasource.url=jdbc:postgresql://localhost:5432/analyzer
+spring.datasource.username=postgres
+spring.datasource.password=postgresql
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Hibernate should NOT try to create/alter tables -- your Python service's
+# init_db() already owns table creation via SQLAlchemy. Spring just maps
+# onto the existing schema.
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+server.port=8081
+
+# Base URL of the Python analytics service (FastAPI, running on port 8000)
+analytics.service.base-url=http://localhost:8000
+
+# JWT signing secret -- MUST be at least 32 characters for HS256.
+# Generate your own for real use: openssl rand -base64 32
+jwt.secret=CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_AT_LEAST_32_CHARS
+jwt.expiration-ms=86400000
